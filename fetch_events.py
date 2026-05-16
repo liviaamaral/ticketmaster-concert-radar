@@ -13,11 +13,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
-
-# Edit this list to control which cities you ingest.
+# List of cities this system will ingest.
 CITIES: list[dict[str, str]] = [
     {"city": "Pittsburgh", "stateCode": "PA", "countryCode": "US"},
     {"city": "New York",   "stateCode": "NY", "countryCode": "US"},
@@ -62,9 +58,6 @@ def fetch_events_for_city(api_key: str, city_params: dict[str, str]) -> Iterator
             return
         yield from events
 
-        total_pages = data.get("page", {}).get("totalPages", 0)
-        if page + 1 >= total_pages:
-            return
         page += 1
         # Polite pause between pages — API allows 5 req/sec but no need to push it
         time.sleep(0.25)
