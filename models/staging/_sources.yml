@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: raw
+    database: TICKETMASTER
+    schema: RAW
+    description: "Raw events landed from the Ticketmaster Discovery API."
+    tables:
+      - name: raw_events
+        description: "One row per (event_id, fetched_city) per ingestion run. Deduplication happens in staging."
+        columns:
+          - name: event_id
+            description: "Ticketmaster event identifier."
+            tests:
+              - not_null
+          - name: fetched_city
+            description: "City used in the API query that returned this event."
+            tests:
+              - not_null
+          - name: ingested_at
+            description: "UTC timestamp when the row was inserted by fetch_events.py."
+            tests:
+              - not_null
+          - name: payload
+            description: "Full event JSON payload from the Ticketmaster Discovery API v2."
+            tests:
+              - not_null

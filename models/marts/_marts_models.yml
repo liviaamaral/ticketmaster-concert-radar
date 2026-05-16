@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: dim_artists
+    description: "Unique artists (attractions) extracted from events."
+    columns:
+      - name: artist_id
+        description: "Ticketmaster attraction identifier."
+        tests:
+          - unique
+          - not_null
+      - name: artist_name
+        description: "Display name of the artist."
+        tests:
+          - not_null
+
+  - name: dim_venues
+    description: "Unique venues extracted from events."
+    columns:
+      - name: venue_id
+        description: "Ticketmaster venue identifier."
+        tests:
+          - unique
+          - not_null
+      - name: venue_name
+        description: "Display name of the venue."
+        tests:
+          - not_null
+
+  - name: fct_events
+    description: "Core fact table joining events with artist and venue dimensions."
+    columns:
+      - name: event_id
+        description: "Ticketmaster event identifier (not unique — one row per city)."
+        tests:
+          - not_null
+      - name: event_status
+        description: "Ticketmaster sale status code."
+        tests:
+          - accepted_values:
+              values: ["onsale", "offsale", "cancelled", "postponed", "rescheduled"]
+
+  - name: fct_events_by_city
+    description: "Daily event aggregations per city and genre."
+    columns:
+      - name: total_events
+        description: "Number of events matching city + date + genre."
+      - name: unique_artists
+        description: "Count of distinct headlining artists."
+      - name: unique_venues
+        description: "Count of distinct venues."
+      - name: min_ticket_price
+        description: "Lowest minimum ticket price across events."
+      - name: max_ticket_price
+        description: "Highest maximum ticket price across events."
+      - name: avg_ticket_price
+        description: "Average of ((price_min + price_max) / 2) across events."

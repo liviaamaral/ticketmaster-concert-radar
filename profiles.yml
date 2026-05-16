@@ -1,0 +1,14 @@
+ticketmaster_concert_radar:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      private_key_path: "{{ env_var('SNOWFLAKE_PRIVATE_KEY_PATH', '~/.ssh/snowflake_key.p8') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE', 'ACCOUNTADMIN') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE', 'TICKETMASTER') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'TICKETMASTER_WH') }}"
+      schema: RAW
+      threads: 4
+      client_session_keep_alive: false

@@ -1,0 +1,68 @@
+version: 2
+
+models:
+  - name: stg_events
+    description: >
+      Deduplicated and flattened events from RAW_EVENTS.
+      One row per event_id (latest ingestion wins).
+    tests:
+      - unique:
+          column_name: "event_id || '|' || fetched_city"
+    columns:
+      - name: event_id
+        description: "Ticketmaster event identifier."
+        tests:
+          - not_null
+      - name: fetched_city
+        description: "City used in the API query."
+        tests:
+          - not_null
+      - name: event_name
+        description: "Display name of the event."
+        tests:
+          - not_null
+      - name: event_date
+        description: "Local date of the event (venue timezone)."
+      - name: event_status
+        description: "Ticketmaster sale status code (e.g. onsale, offsale, cancelled)."
+      - name: venue_id
+        description: "Ticketmaster venue identifier."
+      - name: artist_id
+        description: "Ticketmaster attraction identifier for the headlining artist."
+      - name: genre
+        description: "Primary music genre."
+      - name: price_min
+        description: "Minimum ticket price."
+      - name: price_max
+        description: "Maximum ticket price."
+      - name: price_currency
+        description: "ISO 4217 currency code (e.g. USD)."
+
+  - name: stg_event_snapshots
+    description: >
+      SCD Type 2 history table. One row per (event_id, fetched_city, version).
+      A new version is created whenever event_status, event_date, event_time,
+      price_min, or price_max changes between ingestion runs.
+    columns:
+      - name: event_id
+        tests:
+          - not_null
+      - name: fetched_city
+        tests:
+          - not_null
+      - name: version
+        description: "Version number, starting at 1, incremented on each attribute change."
+        tests:
+          - not_null
+      - name: valid_from
+        description: "ingested_at when this version was first observed."
+        tests:
+          - not_null
+      - name: valid_to
+        description: "ingested_at of the next version. NULL means this is the current version."
+      - name: is_current
+        description: "TRUE for the latest version of each event/city pair."
+        tests:
+          - not_null
+      - name: event_status
+        description: "Ticketmaster sale status code at this version."

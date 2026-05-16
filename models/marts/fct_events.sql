@@ -1,0 +1,22 @@
+SELECT
+    event_id,
+    fetched_city,
+    event_name,
+    event_url,
+    event_date,
+    event_time,
+    event_datetime_utc,
+    event_status,
+    genre,
+    sub_genre,
+    venue_id,
+    venue_name,
+    venue_city,
+    venue_state_code,
+    artist_id,
+    artist_name,
+    price_min,
+    price_max,
+    price_currency,
+    ingested_at
+FROM {{ ref('stg_events') }}
