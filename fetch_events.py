@@ -97,7 +97,7 @@ def load_to_snowflake(rows: list[tuple[str, str, datetime, str]]) -> None:
     conn = snowflake.connector.connect(
         account=os.environ["SNOWFLAKE_ACCOUNT"],
         user=os.environ["SNOWFLAKE_USER"],
-        password=os.environ["SNOWFLAKE_PASSWORD"],
+        private_key_file=os.environ["SNOWFLAKE_PRIVATE_KEY_PATH"],
         warehouse=os.environ.get("SNOWFLAKE_WAREHOUSE", "TICKETMASTER_WH"),
         database=os.environ.get("SNOWFLAKE_DATABASE", "TICKETMASTER"),
         schema=os.environ.get("SNOWFLAKE_SCHEMA", "RAW"),
@@ -107,7 +107,7 @@ def load_to_snowflake(rows: list[tuple[str, str, datetime, str]]) -> None:
         cur = conn.cursor()
         cur.executemany(
             """
-            INSERT INTO RAW_EVENTS (event_id, fetched_city, ingested_at, payload)
+            INSERT INTO TICKETMASTER.RAW.RAW_EVENTS (event_id, fetched_city, ingested_at, payload)
             SELECT column1, column2, column3, PARSE_JSON(column4)
             FROM VALUES (%s, %s, %s, %s)
             """,
