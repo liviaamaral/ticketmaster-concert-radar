@@ -1,5 +1,5 @@
 WITH venues AS (
-    SELECT DISTINCT
+    SELECT
         venue_id,
         venue_name,
         venue_city,
@@ -10,6 +10,7 @@ WITH venues AS (
         venue_longitude
     FROM {{ ref('stg_events') }}
     WHERE venue_id IS NOT NULL
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY venue_id ORDER BY ingested_at DESC) = 1
 )
 
 SELECT
