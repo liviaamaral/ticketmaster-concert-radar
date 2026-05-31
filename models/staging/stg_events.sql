@@ -60,6 +60,16 @@ renamed AS (
 
     FROM deduped
     WHERE _rn = 1
+),
+
+-- Remove events with implausible dates: must be within 5 years from today.
+-- Outliers like 2037 are data errors in the Ticketmaster API response.
+validated AS (
+    SELECT *
+    FROM renamed
+    WHERE event_date IS NULL
+       OR event_date BETWEEN DATEADD(year, -1, CURRENT_DATE)
+                         AND DATEADD(year,  5, CURRENT_DATE)
 )
 
-SELECT * FROM renamed
+SELECT * FROM validated
