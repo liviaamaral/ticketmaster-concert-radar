@@ -1,6 +1,6 @@
 # Ticketmaster Concert Radar
 
-End-to-end data pipeline that ingests, transforms, and visualizes live music events across major U.S. cities to answer: **where are concerts happening, how much do they cost, and how does that change over time?**
+End-to-end data pipeline that ingests, transforms, and visualizes live music events across major U.S. cities to answer: **where are concerts happening, how much do they cost, and how does music scene changes within US cities?**
 
 Built with Snowflake, dbt, and GitHub Actions.
 
@@ -19,11 +19,19 @@ Built with Snowflake, dbt, and GitHub Actions.
 - Transformation — [dbt](https://www.getdbt.com)
 - CI/CD & Orchestration — [GitHub Actions](https://github.com/features/actions)
 
-<!-- TODO: add architecture diagram -->
+<p align="center">
+    <img src="docs/ticketmaster_concert_radar_architecture.png" alt="Architecture" width="800"/>
+  </a>
+</p>
 
 ## Dashboard
+You can access the dashboard by running
+`streamlit run app.py`
 
-<!-- TODO: add dashboard link and screenshot once built -->
+<p align="center">
+    <img src="docs/dashboard.png" alt="Dashboard" width="800"/>
+  </a>
+</p>
 
 ## Problem
 
@@ -33,7 +41,11 @@ This project builds a daily pipeline that ingests music events for 7 U.S. cities
 
 ## Key Findings
 
-<!-- TODO: add findings after collecting a few weeks of data -->
+- **Event concentration:** New York, Los Angeles, Chicago, and Nashville together account for more than 80% of all music events in the dataset. Pittsburgh, by contrast, represents less than or around 10% of the event volume seen in any of the three largest markets.
+
+- **Genre identity by city:** Each city has a distinct musical identity. Jazz dominates New York, Country leads Nashville, and Alternative is the top genre in Austin. Most other cities skew toward Rock — with the exception of Pittsburgh, where the most frequent classification is *Other*, suggesting a more fragmented or niche local scene.
+
+- **Ticket pricing gap:** New York consistently has the highest ticket prices across the dataset, while Pittsburgh has the lowest. This aligns with both the size of the markets and the caliber of touring acts each city attracts.
 
 ## Setup
 
@@ -142,8 +154,6 @@ dbt test --profiles-dir .
 
 ## Further Improvements
 
-- Add GitHub Actions workflow for daily automated ingestion + dbt run
-- Build a Streamlit in Snowflake dashboard on top of `fct_events_by_city`
 - Expand to more cities
 - Add incremental models to reduce Snowflake compute costs
 
