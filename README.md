@@ -25,8 +25,6 @@ Built with Snowflake, dbt, and GitHub Actions.
 </p>
 
 ## Dashboard
-You can access the dashboard by running
-`streamlit run app.py`
 
 <p align="center">
     <img src="docs/dashboard.png" alt="Dashboard" width="800"/>
