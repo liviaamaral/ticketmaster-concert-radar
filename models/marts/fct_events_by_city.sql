@@ -10,4 +10,5 @@ SELECT
     AVG((price_min + price_max) / 2.0)          AS avg_ticket_price
 FROM {{ ref('fct_events') }}
 WHERE event_date IS NOT NULL
+  AND is_current = TRUE
 GROUP BY 1, 2, 3

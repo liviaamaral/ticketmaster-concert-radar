@@ -2,46 +2,76 @@ version: 2
 
 models:
   - name: dim_artists
-    description: "Unique artists (attractions) extracted from events."
+    description: "SCD Type 2 dimension for artists (attractions). One row per artist version; a new version is created when artist_name changes."
     columns:
-      - name: artist_id
-        description: "Ticketmaster attraction identifier."
+      - name: artist_sk
+        description: "Surrogate key — MD5 of (artist_id, valid_from). Uniquely identifies a version."
         tests:
           - unique
+          - not_null
+      - name: artist_id
+        description: "Ticketmaster attraction identifier (natural key)."
+        tests:
           - not_null
       - name: artist_name
-        description: "Display name of the artist."
+        description: "Display name of the artist at this version."
         tests:
           - not_null
+      - name: valid_from
+        description: "Timestamp when this version became active (ingested_at of first observation)."
+      - name: valid_to
+        description: "Timestamp when this version was superseded (NULL = still current)."
+      - name: is_current
+        description: "TRUE for the latest active version of each artist."
 
   - name: dim_venues
-    description: "Unique venues extracted from events."
+    description: "SCD Type 2 dimension for venues. One row per venue version; a new version is created when name, city, state, or address changes."
     columns:
-      - name: venue_id
-        description: "Ticketmaster venue identifier."
+      - name: venue_sk
+        description: "Surrogate key — MD5 of (venue_id, valid_from). Uniquely identifies a version."
         tests:
           - unique
           - not_null
-      - name: venue_name
-        description: "Display name of the venue."
+      - name: venue_id
+        description: "Ticketmaster venue identifier (natural key)."
         tests:
           - not_null
+      - name: venue_name
+        description: "Display name of the venue at this version."
+        tests:
+          - not_null
+      - name: valid_from
+        description: "Timestamp when this version became active."
+      - name: valid_to
+        description: "Timestamp when this version was superseded (NULL = still current)."
+      - name: is_current
+        description: "TRUE for the latest active version of each venue."
 
   - name: fct_events
-    description: "Core fact table joining events with artist and venue dimensions."
+    description: "SCD Type 2 fact table. One row per (event_id, fetched_city, version). A new version is created when event_status, event_date, event_time, price_min, or price_max changes. Foreign keys artist_sk and venue_sk reference the dim version active at valid_from."
     columns:
+      - name: event_sk
+        description: "Surrogate key — MD5 of (event_id, fetched_city, version)."
+        tests:
+          - unique
+          - not_null
       - name: event_id
-        description: "Ticketmaster event identifier (not unique — one row per city)."
+        description: "Ticketmaster event identifier (natural key — not unique, one row per city/version)."
         tests:
           - not_null
       - name: event_status
         description: "Ticketmaster sale status code."
         tests:
           - accepted_values:
-              values: ["onsale", "offsale", "cancelled", "postponed", "rescheduled"]
+              config:
+                severity: warn
+              arguments:
+                values: ["onsale", "offsale", "cancelled", "postponed", "rescheduled"]
+      - name: is_current
+        description: "TRUE for the latest active version of each (event_id, fetched_city)."
 
   - name: fct_events_by_city
-    description: "Daily event aggregations per city and genre."
+    description: "Daily event aggregations per city and genre (current versions only)."
     columns:
       - name: total_events
         description: "Number of events matching city + date + genre."
