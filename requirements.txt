@@ -1,4 +1,7 @@
 agate==1.9.1
+pandas>=2.2.0
+plotly>=5.22.0
+streamlit>=1.35.0
 annotated-types==0.7.0
 asn1crypto==1.5.1
 attrs==26.1.0

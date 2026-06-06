@@ -147,6 +147,9 @@ activemq-data/
 # SageMath parsed files
 *.sage.py
 
+# Streamlit secrets (never commit real credentials)
+.streamlit/secrets.toml
+
 # Environments
 .env
 .envrc
